@@ -3,24 +3,25 @@ const { response } = require('../../utils/responses');
 
 module.exports.restar = async (event) => {
     try {
-        // const body = JSON.parse(event.body);
+        const params = {
+            a: event.queryStringParameters.a,
+            b: event.queryStringParameters.b
+        };
 
-        // if (!body || !body.a || !body.b) {
-        //     return response(400, { msg: 'mandame los parametros' });
-        // };
+        if (!params.a || !params.b) {
+            return response(400, { msg: 'mandame los parametros' });
+        };
 
-        // const { a, b } = body;
+        if (!/\d/.test(params.a) || !/\d/.test(params.b)) {
+            return response(400, { msg: 'a y b deben ser numeros' });
+        };
 
-        // if (typeof a != 'number' || typeof b != 'number') {
-        //     return response(400, { msg: 'deben ser numeros' });
-        // };
-
-        // const resultado = a + b;
+        const resultado = parseInt(params.a) - parseInt(params.b);
         const output = {
-            //resultado
-            event
+            resultado
         };
         return response(200, output);
+
     } catch (err) {
         return response(500, { msg: err.message });
     }

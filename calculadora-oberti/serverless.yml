@@ -21,3 +21,15 @@ functions:
       - httpApi:
           path: /api/restar
           method: post
+  multiplicar:
+    handler: src/handlers/multiplicar/index.multiplicar
+    events:
+      - httpApi:
+          path: /api/multiplicar
+          method: post
+  dividir:
+    handler: src/handlers/dividir/index.dividir
+    events:
+      - httpApi:
+          path: /api/dividir
+          method: post
