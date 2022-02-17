@@ -1,0 +1,106 @@
+service: oberti-workshop8
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  environment:
+    USER_POOL_ID:
+      Ref: CognitoUserPool
+    APP_CLIENT_ID:
+      Ref: CognitoUserPoolClient
+    REGION: ${self:provider.region}
+
+custom:
+  userPoolName: ${self:service}-${self:provider.stage}-user-pool
+  userPoolClient: ${self:service}-${self:provider.stage}-user-pool-client
+
+functions:
+  auth:
+    handler: src/handlers/authorizer.handler
+  getInfo:
+    handler: src/handlers/getInfo/index.handler
+    events:
+      - http:
+          path: /api/info
+          method: get
+          authorizer: auth
+  signUp:
+    handler: src/handlers/signUp/index.handler
+    events:
+      - http:
+          path: /api/user/signup
+          method: post
+          request:
+            schemas:
+              application/json: ${file(src/handlers/signUp/schema.json)}
+  verifyCode:
+    handler: src/handlers/verifyCode/index.handler
+    events:
+      - http:
+          path: /api/user/verify
+          method: post
+          request:
+            schemas:
+              application/json: ${file(src/handlers/verifyCode/schema.json)}
+  logIn:
+    handler: src/handlers/logIn/index.handler
+    events:
+      - http:
+          path: /api/user/login
+          method: post
+          cors: true # <-- CORS!
+          request:
+            schemas:
+              application/json: ${file(src/handlers/logIn/schema.json)}
+  renewToken:
+    handler: src/handlers/renewToken/index.handler
+    events:
+      - http:
+          path: /api/user/refresh
+          method: post
+          request:
+            schemas:
+              application/json: ${file(src/handlers/renewToken/schema.json)}
+  changePassword:
+    handler: src/handlers/changePassword/index.handler
+    events:
+      - http:
+          path: /api/user/password
+          method: post
+          request:
+            schemas:
+              application/json: ${file(src/handlers/changePassword/schema.json)}
+  verifyAccessToken:
+    handler: src/handlers/verifyAccessToken/index.handler
+    events:
+      - http:
+          path: /api/token/verify
+          method: post
+          request:
+            schemas:
+              application/json: ${file(src/handlers/verifyAccessToken/schema.json)}
+
+resources:
+  Resources:
+    CognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: ${self:custom.userPoolName}
+        UsernameAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+    CognitoUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: ${self:custom.userPoolClient}
+        UserPoolId:
+          Ref: CognitoUserPool
+        ExplicitAuthFlows:
+          - ADMIN_NO_SRP_AUTH
+        GenerateSecret: false
