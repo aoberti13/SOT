@@ -1,3 +1,3 @@
 # SOT
 
-Repositorio con todas las clases de BackEnd SOT
+Repositorio con todas las clases de BackEnd SOT + workShops
