@@ -1,0 +1,35 @@
+service: oberti-workshop3
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  stage: dev
+  region: us-east-1
+
+functions:
+  sumar:
+    handler: src/handlers/sumar/index.handler
+    events:
+      - httpApi:
+          path: /api/sumar
+          method: get
+  restar:
+    handler: src/handlers/restar/index.handler
+    events:
+      - httpApi:
+          path: /api/restar
+          method: get
+  multiplicar:
+    handler: src/handlers/multiplicar/index.handler
+    events:
+      - httpApi:
+          path: /api/multiplicar
+          method: post
+  dividir:
+    handler: src/handlers/dividir/index.handler
+    events:
+      - httpApi:
+          path: /api/dividir
+          method: post
