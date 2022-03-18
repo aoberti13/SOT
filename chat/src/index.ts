@@ -17,5 +17,5 @@ initWsServer(server);
 // Listening to port...
 const PORT = 8080 || process.env.PORT;
 server.listen(PORT, () => {
-    console.log('servers up');
+    console.log('Server up in localhost:' + PORT);
 });
